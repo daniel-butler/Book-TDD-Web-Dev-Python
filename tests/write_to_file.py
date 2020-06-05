@@ -15,10 +15,7 @@ def _replace_lines_from_to(old_lines, new_lines, start_pos, end_pos):
     print('replace lines from line', start_pos, 'to line', end_pos)
     old_indent = get_indent(old_lines[start_pos])
     new_indent = get_indent(new_lines[0])
-    if new_indent:
-        missing_indent = old_indent[:-len(new_indent)]
-    else:
-        missing_indent = old_indent
+    missing_indent = old_indent[:-len(new_indent)] if new_indent else old_indent
     indented_new_lines = [missing_indent + l for l in new_lines]
     return '\n'.join(
         old_lines[:start_pos] +
@@ -74,8 +71,7 @@ def _replace_single_line(old_lines, new_lines):
     line_finder = lambda l: number_of_identical_chars(l, new_line)
     likely_line = sorted(old_lines, key=line_finder)[-1]
     new_line = get_indent(likely_line) + new_line
-    new_content = '\n'.join(old_lines).replace(likely_line, new_line)
-    return new_content
+    return '\n'.join(old_lines).replace(likely_line, new_line)
 
 
 def _replace_lines_in(old_lines, new_lines):
@@ -93,12 +89,11 @@ def _replace_lines_in(old_lines, new_lines):
             new_contents = new_lines[0] + '\n'
             return new_contents + _replace_lines_in(old_lines[1:], new_lines[1:])
 
-        if VIEW_FINDER.match(new_lines[0]):
-            if source.views:
-                view_name = VIEW_FINDER.search(new_lines[0]).group(1)
-                if view_name in source.views:
-                    return source.replace_function(new_lines)
-                return '\n'.join(old_lines) + '\n\n' + '\n'.join(new_lines)
+        if VIEW_FINDER.match(new_lines[0]) and source.views:
+            view_name = VIEW_FINDER.search(new_lines[0]).group(1)
+            if view_name in source.views:
+                return source.replace_function(new_lines)
+            return '\n'.join(old_lines) + '\n\n' + '\n'.join(new_lines)
 
         class_finder = re.compile(r'^class \w+\(.+\):$', re.MULTILINE)
         if class_finder.match(new_lines[0]):
@@ -140,10 +135,9 @@ def _find_last_line_for_class(source, classname):
     all_nodes = list(ast.walk(ast.parse(source)))
     classes = [n for n in all_nodes if isinstance(n, ast.ClassDef)]
     our_class = next(c for c in classes if c.name == classname)
-    last_line_in_our_class = max(
+    return max(
         getattr(thing, 'lineno', 0) for thing in ast.walk(our_class)
     )
-    return last_line_in_our_class
 
 
 def add_to_class(new_lines, old_lines):

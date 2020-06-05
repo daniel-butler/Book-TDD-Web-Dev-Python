@@ -737,32 +737,32 @@ class CheckIndentationTest(unittest.TestCase):
 
 
     def test_over_indentation_differences_are_picked_up(self):
-        lines = [
-            "def method1(self):",
-            "        # amend method 1",
-            "    return 2",
-        ]
-        future_lines = [
-            "    def method1(self):",
-            "        # amend method 1",
-            "        return 2",
-        ]
         with self.assertRaises(ApplyCommitException):
+            lines = [
+                "def method1(self):",
+                "        # amend method 1",
+                "    return 2",
+            ]
+            future_lines = [
+                "    def method1(self):",
+                "        # amend method 1",
+                "        return 2",
+            ]
             check_indentation(lines, future_lines)
 
 
     def test_under_indentation_differences_are_picked_up(self):
-        lines = [
-            "def method1(self):",
-            "# amend method 1",
-            "    return 2",
-        ]
-        future_lines = [
-            "    def method1(self):",
-            "        # amend method 1",
-            "        return 2",
-        ]
         with self.assertRaises(ApplyCommitException):
+            lines = [
+                "def method1(self):",
+                "# amend method 1",
+                "    return 2",
+            ]
+            future_lines = [
+                "    def method1(self):",
+                "        # amend method 1",
+                "        return 2",
+            ]
             check_indentation(lines, future_lines)
 
 

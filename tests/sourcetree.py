@@ -30,17 +30,17 @@ class Commit(object):
         commit.all_lines = commit.info.split('\n')
 
         commit.lines_to_add = [
-            l[1:] for l in commit.all_lines
-            if l.startswith('+') and
-            l[1:].strip() and
-            not l[1] == '+'
+            l[1:]
+            for l in commit.all_lines
+            if l.startswith('+') and l[1:].strip() and l[1] != '+'
         ]
+
         commit.lines_to_remove = [
-            l[1:] for l in commit.all_lines
-            if l.startswith('-') and
-            l[1:].strip() and
-            not l[1] == '-'
+            l[1:]
+            for l in commit.all_lines
+            if l.startswith('-') and l[1:].strip() and l[1] != '-'
         ]
+
         commit.moved_lines = [
             l for l in commit.lines_to_add if l in commit.lines_to_remove
         ]
@@ -130,7 +130,6 @@ class SourceTree(object):
                 print(output)
             except io.BlockingIOError as e:
                 print(e)
-                pass
         return output
 
 

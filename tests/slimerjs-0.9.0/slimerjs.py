@@ -39,7 +39,7 @@ SLIMERJSLAUNCHER = os.environ.get("SLIMERJSLAUNCHER", "");
 if SLIMERJSLAUNCHER == "":
     POSSIBLE_PATH = []
 
-    if sys.platform == "linux" or sys.platform == "linux2" or sys.platform == "darwin":
+    if sys.platform in ["linux", "linux2", "darwin"]:
         POSSIBLE_PATH.append(os.path.join(SLIMERJS_PATH, "xulrunner", "xulrunner"))
         path = which('firefox')
         if path != None:
@@ -139,7 +139,7 @@ NO_TEMP_PROFILE_OPTIONS = [
     "--reset-profile","--profile","--p","--createprofile","--profilemanager",
 ]
 for arg in SYS_ARGS:
-    if arg == '--help' or arg == "-h":
+    if arg in ['--help', "-h"]:
         showHelp()
         sys.exit(0)
 
@@ -165,8 +165,11 @@ os.environ.data['__SLIMER_ENV'] = LISTVAR
 os.environ.data['__SLIMER_ARGS'] = string.join(SYS_ARGS,' ')
 
 # launch slimerjs with firefox/xulrunner
-SLCMD = [ SLIMERJSLAUNCHER ]
-SLCMD.extend(["-app", os.path.join(SLIMERJS_PATH, "application.ini"), "-no-remote"])
+SLCMD = [
+    SLIMERJSLAUNCHER,
+    *["-app", os.path.join(SLIMERJS_PATH, "application.ini"), "-no-remote"],
+]
+
 if sys.platform == "win32":
     SLCMD.extend(["-attach-console"])
 SLCMD.extend(PROFILE)
@@ -190,5 +193,5 @@ except OSError as err:
 
 if CREATE_TEMP:
     shutil.rmtree(PROFILE_DIR)
-    
+
 sys.exit(exitCode)

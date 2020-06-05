@@ -21,7 +21,6 @@ class Chapter9cTest(ChapterTest):
 
         self.start_with_checkout()
 
-        vm_restore = 'MAKING_END'
         # hack fast-forward
         skip = False
         if skip:
@@ -31,6 +30,7 @@ class Chapter9cTest(ChapterTest):
             ))
 
         if DO_SERVER_COMMANDS:
+            vm_restore = 'MAKING_END'
             subprocess.check_call(['vagrant', 'snapshot', 'restore', vm_restore])
 
         self.current_server_cd = '~/sites/superlists-staging.ottg.eu'

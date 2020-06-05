@@ -644,7 +644,7 @@ class LineFindingTests(unittest.TestCase):
         assert source.find_start_line(['bla bla', 'whatever']) == 3
         assert source.find_start_line(['indented', 'whatever']) == 4
         assert source.find_start_line(['    indented', 'whatever']) == 4
-        assert source.find_start_line(['no such line', 'whatever']) == None
+        assert source.find_start_line(['no such line', 'whatever']) is None
         with self.assertRaises(SourceUpdateError):
             source.find_start_line([''])
         with self.assertRaises(SourceUpdateError):
@@ -666,8 +666,8 @@ class LineFindingTests(unittest.TestCase):
 
         assert source.find_end_line(['stuff', 'things']) == 1
         assert source.find_end_line(['bla bla', 'whatever', 'more']) == 5
-        assert source.find_end_line(['bla bla', 'whatever']) == None
-        assert source.find_end_line(['no such line', 'whatever']) == None
+        assert source.find_end_line(['bla bla', 'whatever']) is None
+        assert source.find_end_line(['no such line', 'whatever']) is None
         with self.assertRaises(SourceUpdateError):
             source.find_end_line([])
         with self.assertRaises(SourceUpdateError):

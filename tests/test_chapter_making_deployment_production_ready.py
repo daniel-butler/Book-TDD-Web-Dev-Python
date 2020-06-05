@@ -40,8 +40,6 @@ class Chapter9bTest(ChapterTest):
             ' && git reset --hard origin/chapter_making_deployment_production_ready',
         )
 
-        vm_restore = 'MANUAL_END'
-
         # hack fast-forward
         skip = False
         if skip:
@@ -51,6 +49,8 @@ class Chapter9bTest(ChapterTest):
             ))
 
         if DO_SERVER_COMMANDS:
+            vm_restore = 'MANUAL_END'
+
             subprocess.check_call(['vagrant', 'snapshot', 'restore', vm_restore])
 
         self.current_server_cd = '~/sites/$SITENAME'

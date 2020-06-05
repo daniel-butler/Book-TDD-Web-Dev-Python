@@ -35,8 +35,6 @@ class Chapter18Test(ChapterTest):
         self.start_with_checkout()
         self.prep_database()
 
-        vm_restore = 'FABRIC_END'
-
         # hack fast-forward
         skip = False
         if skip:
@@ -46,6 +44,8 @@ class Chapter18Test(ChapterTest):
             ))
 
         if DO_SERVER_COMMANDS:
+            vm_restore = 'FABRIC_END'
+
             subprocess.check_call(['vagrant', 'snapshot', 'restore', vm_restore])
 
         while self.pos < len(self.listings):

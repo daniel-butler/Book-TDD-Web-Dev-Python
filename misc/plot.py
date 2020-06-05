@@ -14,10 +14,7 @@ def get_data_from_csv():
             for field in reader.fieldnames:
                 if 'words' in field:
                     val = row[field]
-                    if val:
-                        fixed_row[field] = val
-                    else:
-                        fixed_row[field] = 0
+                    fixed_row[field] = val if val else 0
             date = datetime(int(row['date.year']), int(row['date.month']), int(row['date.day']), int(row['date.hour']),)
             fixed_row['date'] = date
             data.append(fixed_row)

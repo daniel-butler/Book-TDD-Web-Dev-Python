@@ -121,11 +121,7 @@ def parse_output(listing):
 
     outputs = []
     output_before = listing.text
-    if output_before:
-        output_before = fix_newlines(output_before.strip())
-    else:
-        output_before = ''
-
+    output_before = fix_newlines(output_before.strip()) if output_before else ''
     for command in commands:
         if '$' in output_before and '\n' in output_before:
             last_cr = output_before.rfind('\n')

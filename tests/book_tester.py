@@ -42,8 +42,8 @@ if 'NO_SERVER_COMMANDS' in os.environ:
 
 def contains(inseq, subseq):
     return any(
-        inseq[pos:pos + len(subseq)] == subseq
-        for pos in range(0, len(inseq) - len(subseq) + 1)
+        inseq[pos : pos + len(subseq)] == subseq
+        for pos in range(len(inseq) - len(subseq) + 1)
     )
 
 
@@ -73,12 +73,11 @@ def strip_mock_ids(output):
         r"Mock name='\1' id='XX'>",
         output,
     )
-    strip_all_mocks = re.sub(
+    return re.sub(
         r"Mock id='(\d+)'>",
         r"Mock id='XX'>",
         strip_mocks_with_names,
     )
-    return strip_all_mocks
 
 def strip_object_ids(output):
     return re.sub('0x([0-9a-f]+)>', '0xXX>', output)
@@ -106,13 +105,12 @@ def strip_git_hashes(output):
         r"index XXXXXXX\.\.XXXXXXX 100644",
         output,
     )
-    fixed_commit_numbers = re.sub(
+    return re.sub(
         r"^[a-f0-9]{7} ",
         r"XXXXXXX ",
         fixed_indexes,
         flags=re.MULTILINE,
     )
-    return fixed_commit_numbers
 
 
 def strip_callouts(output):
@@ -122,13 +120,12 @@ def strip_callouts(output):
         output,
         flags=re.MULTILINE,
     )
-    minus_new_callouts = re.sub(
+    return re.sub(
         r"^(.+)  \(\d+\)$",
         r"\1",
         minus_old_callouts,
         flags=re.MULTILINE,
     )
-    return minus_new_callouts
 
 
 def standardise_library_paths(output):
@@ -527,9 +524,12 @@ class ChapterTest(unittest.TestCase):
             else:
                 self.assertLineIn(line, [l.strip() for l in actual_lines])
 
-        if len(expected_lines) > 4 and '[...' not in expected_fixed:
-            if expected.type != 'qunit output':
-                self.assertMultiLineEqual(actual_fixed.strip(), expected_fixed.strip())
+        if (
+            len(expected_lines) > 4
+            and '[...' not in expected_fixed
+            and expected.type != 'qunit output'
+        ):
+            self.assertMultiLineEqual(actual_fixed.strip(), expected_fixed.strip())
 
         expected.was_checked = True
 
@@ -614,10 +614,6 @@ class ChapterTest(unittest.TestCase):
 
     def _strip_out_any_pycs(self):
         return
-        self.sourcetree.run_command(
-            r"find . -name __pycache__ -exec rm -rf {} \;",
-            ignore_errors=True
-        )
 
 
     def run_test_and_check_result(self, bdd=False):
@@ -653,12 +649,6 @@ class ChapterTest(unittest.TestCase):
         )
         print('fixed phantomjs output', output)
         return output
-
-        os.chmod(SLIMERJS_BINARY, os.stat(SLIMERJS_BINARY).st_mode | stat.S_IXUSR)
-        os.environ['SLIMERJSLAUNCHER'] = '/usr/bin/firefox'
-        return subprocess.check_output(
-            ['xvfb-run', '--auto-servernum', SLIMERJS_BINARY, PHANTOMJS_RUNNER, tests_path]
-        ).decode()
 
 
     def check_qunit_output(self, expected_output):
@@ -735,9 +725,10 @@ class ChapterTest(unittest.TestCase):
             'diff' in self.listings[pos] or 'status' in self.listings[pos]
         )
         git_output = self.run_command(self.listings[pos])
-        if not any('/' + l in git_output for l in LIKELY_FILES):
-            if not any(f in git_output for f in ('lists/', 'functional_tests.py')):
-                self.fail('no likely files in diff output %s' % (git_output,))
+        if all('/' + l not in git_output for l in LIKELY_FILES) and all(
+            f not in git_output for f in ('lists/', 'functional_tests.py')
+        ):
+            self.fail('no likely files in diff output %s' % (git_output,))
         self.pos += 1
         comment = self.listings[pos + 1]
         if comment.skip:
@@ -823,11 +814,7 @@ class ChapterTest(unittest.TestCase):
                 expected_output = output_before
                 output_after = None
                 next_output = None
-            if user_input == '2':
-                ignore_errors = True
-            else:
-                ignore_errors = False
-
+            ignore_errors = True if user_input == '2' else False
         else:
             user_input = None
             expected_output = output_before

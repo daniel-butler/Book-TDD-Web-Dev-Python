@@ -174,11 +174,10 @@ class Source(object):
         except StopIteration:
             return len(self.lines)
         pos = self.lines.index(first_nonimport)
-        if self._import_nodes:
-            if pos < max(n.lineno for n in self._import_nodes):
-                raise SourceUpdateError('first nonimport (%s) was before end of imports (%s)' % (
-                    first_nonimport, max(n.lineno for n in self._import_nodes))
-                )
+        if self._import_nodes and pos < max(n.lineno for n in self._import_nodes):
+            raise SourceUpdateError('first nonimport (%s) was before end of imports (%s)' % (
+                first_nonimport, max(n.lineno for n in self._import_nodes))
+            )
         return pos
 
 

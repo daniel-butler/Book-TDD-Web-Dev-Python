@@ -641,8 +641,8 @@ class AssertConsoleOutputCorrectTest(ChapterTest):
         actual = "AssertionError"
         expected = Output("AssertionError: None")
         self.assert_console_output_correct(actual, expected)
-        actual2 = "AssertionError: something"
         with self.assertRaises(AssertionError):
+            actual2 = "AssertionError: something"
             self.assert_console_output_correct(actual2, expected)
 
 
@@ -662,9 +662,9 @@ class AssertConsoleOutputCorrectTest(ChapterTest):
 
 
     def test_only_ignores_exactly_32_char_strings_no_whitespace(self):
-        actual = "qnslckvp2aga7tm6xuivyb0ob1akzzwl"
         expected = Output("jvhzc8kj2mkh06xooqq9iciptead20qq")
         with self.assertRaises(AssertionError):
+            actual = "qnslckvp2aga7tm6xuivyb0ob1akzzwl"
             self.assert_console_output_correct(actual[:-1], expected[:-1])
             self.assert_console_output_correct(actual + '1', expected + 'a')
             self.assert_console_output_correct(' ' + actual, ' ' + expected)

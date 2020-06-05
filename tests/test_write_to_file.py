@@ -133,7 +133,7 @@ class WriteToFileTest(unittest.TestCase):
         old = '#abc\n#def\n#ghi\n#jkl\n'
         new = '#mno\n#pqr\n#stu\n#vvv\n'
         expected = new
-        self.assert_write_to_file_gives(old, new, expected)
+        self.assert_write_to_file_gives(old, expected, expected)
 
 
     def test_existing_file_has_views_means_apppend(self):

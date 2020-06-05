@@ -48,7 +48,7 @@ def main():
         for commit in commits:
             checkout_commit(commit.hash)
             all_wordcounts[commit] = get_wordcounts()
-            filenames.update(set(wc.filename for wc in all_wordcounts[commit]))
+            filenames.update({wc.filename for wc in all_wordcounts[commit]})
 
         with open(os.path.join(BOOK_ROOT, 'wordcounts.tsv'), 'w') as csvfile:
             fieldnames = ['date.{}'.format(thing) for thing in ['year', 'month', 'day', 'hour']]
@@ -58,14 +58,16 @@ def main():
             writer = csv.DictWriter(csvfile, fieldnames, dialect="excel-tab")
             writer.writeheader()
             for commit, wordcounts in all_wordcounts.items():
-                row = {}
-                row['hash'] = commit.hash
-                row['subject'] = commit.subject
-                row['date'] = ''
-                row['date.year'] = commit.date.year
-                row['date.month'] = commit.date.month
-                row['date.day'] = commit.date.day
-                row['date.hour'] = commit.date.hour
+                row = {
+                    'hash': commit.hash,
+                    'subject': commit.subject,
+                    'date': '',
+                    'date.year': commit.date.year,
+                    'date.month': commit.date.month,
+                    'date.day': commit.date.day,
+                    'date.hour': commit.date.hour,
+                }
+
                 for wordcount in wordcounts:
                     row[wordcount.filename + " (words)"] = wordcount.words
                     row[wordcount.filename + " (lines)"] = wordcount.lines
